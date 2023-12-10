@@ -8,23 +8,7 @@ const Drawer = createDrawerNavigator();
 
 const LogoutButton = () => {
   const { logout } = useContext(AuthContext);
-  return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Button
-        title="Log out"
-        style={{
-          height: 50,
-          width: 130,
-          borderRadius: 10,
-          backgroundColor: "skyblue",
-        }}
-        onPress={() => {
-          logout();
-          
-        }}
-      />
-    </View>
-  );
+  logout();
 };
 
 export default function AppDrawer() {

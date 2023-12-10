@@ -7,9 +7,8 @@ import axios from "axios";
 import * as ImagePicker from "expo-image-picker";
 import { FlatList, RefreshControl } from "react-native-gesture-handler";
 
-
 export default function Profile() {
-  const { userToken, userid } = useContext(AuthContext);
+  const { userToken, userid,setIsLoading } = useContext(AuthContext);
   const [userPosts, setUserPosts] = useState([]);
   const [userName, setUserName] = useState("");
   const [profileImg, setProfileImg] = useState(
@@ -38,15 +37,18 @@ export default function Profile() {
   const apiAuth = {
     headers: {
       Authorization: `Bearer ${userToken}`,
+      "Content-Type": "multipart/form-data",
     },
   };
 
   const userinfo = async () => {
+    
     await axios
       .get(`${BASE_URL}/user/getUser?id=${userid}`, apiAuth)
       .then((response) => {
         console.log("User info:", response.data);
         setUserName(response.data.userName);
+        setProfileImg(response.data.imageUrl);
       })
       .catch((error) => {
         console.error("Error fetching user info:", error);
@@ -68,33 +70,63 @@ export default function Profile() {
     };
   }, []);
 
+
+
+  const formatDate = (inputDate) => {
+    const date = new Date(inputDate);
+    const currentDate = new Date();
+    const timeDifference = currentDate.getTime() - date.getTime();
+    const millisecondsInDay = 24 * 60 * 60 * 1000;
+
+    const daysAgo = Math.floor(timeDifference / millisecondsInDay);
+
+    if (daysAgo === 1) {
+      return "1 day ago";
+    } else if (daysAgo > 1) {
+      return `${daysAgo} days ago`;
+    } else {
+      const minutesAgo = Math.floor(timeDifference / (60 * 1000));
+      if (minutesAgo < 60) {
+        return `${minutesAgo} minutes ago`;
+      } else {
+        const hoursAgo = Math.floor(timeDifference / (60 * 60 * 1000));
+        return `${hoursAgo} hours ago`;
+      }
+    }
+  };
+  const FormattedDate = ({ date }) => {
+    const formattedDate = formatDate(date);
+    return (
+      <View style={{flex:1,position:"relative",marginTop:15,marginLeft:5}}>
+        <Text style={{fontSize:12,padding:5, color: "gray",position:"absolute",bottom:0 }}>{formattedDate}</Text>
+      </View>
+    );
+  }
+
   const pickImage = async () => {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
-        aspect: [1, 1],
-        quality: 1,
+        quality: 0.5,
+        aspect:[1,1],
+        allowsMultipleSelection: false,
       });
-
-      if (!result.canceled && result.uri) {
+  
+      if (!result.canceled) {
+        
         setProfileImg(result.uri);
-
-        const formData = new FormData();
-        formData.append("photo", {
+  
+        const imageData = new FormData();
+        imageData.append("photo", {
           uri: result.uri,
           type: "image/jpeg",
           name: "photo.jpg",
         });
-        
-        await axios.post(`${BASE_URL}/user/addPhoto`, formData, {
-          headers: {
-            Authorization: `Bearer ${userToken}`,
-            "Content-Type": "multipart/form-data",
-          },
-        });
-        console.log("Image uploaded");
-
+  
+       
+        const response = await axios.post(`${BASE_URL}/user/addPhoto`, imageData, apiAuth);
+        console.log("Image uploaded", response.data);
       } else {
         console.log("Image selection cancelled or failed");
       }
@@ -102,15 +134,15 @@ export default function Profile() {
       console.error("Error picking image:", error);
     }
   };
+
+  
   
 
   const renderPostItem = ({ item }) => (
     <TouchableOpacity style={styles.postContainer}>
-      <Image
-        source={require("../assets/NOiMAGE.png")}
-        style={styles.postImage}
-      />
       <Text style={styles.postTitle}>{item.title}</Text>
+      <Text style={styles.content}>{item.content}</Text>
+      <FormattedDate date={item.createdAt} />
     </TouchableOpacity>
   );
 
@@ -120,11 +152,17 @@ export default function Profile() {
         <TouchableOpacity onPress={pickImage}>
           <Image source={{ uri: profileImg }} style={styles.profileImage} />
         </TouchableOpacity>
-        <View style={{flex:1,flexDirection:"row",justifyContent:"space-between"}}>
-        <Text style={styles.username}>{userName}</Text>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Follow</Text>
-        </TouchableOpacity>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "row",
+            justifyContent: "space-between",
+          }}
+        >
+          <Text style={styles.username}>{userName}</Text>
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.buttonText}>Follow</Text>
+          </TouchableOpacity>
         </View>
       </View>
       <Text
@@ -169,13 +207,12 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   button: {
-    position:'relative',
-    right:40,
+    position: "relative",
+    right: 40,
     backgroundColor: "#3498db",
     paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 5,
-    
   },
   buttonText: {
     color: "#fff",
@@ -200,10 +237,12 @@ const styles = StyleSheet.create({
     },
   },
   profileImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 55,
+    height: 55,
+    borderRadius: 30,
     marginRight: 10,
+    borderWidth:1,
+    borderColor:"black"
   },
   username: {
     fontSize: 18,
@@ -230,8 +269,14 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
   },
   postTitle: {
-    fontSize: 12,
-    fontWeight: "500",
+    fontSize: 14,
+    fontWeight: "600",
     padding: 7,
   },
+  content:{
+    fontSize: 12,
+    fontWeight: "500",
+    padding: 10,
+    marginBottom:10,
+  }
 });

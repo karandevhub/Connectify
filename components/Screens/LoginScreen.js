@@ -12,8 +12,8 @@ import { useContext, useState } from "react";
 
 export default function LoginScreen(props) {
   const { login } = useContext(AuthContext);
-  const [email, setEmail] = useState(undefined);
-  const [password, setPassword] = useState(undefined);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   return (
     <BackGround>
       <View style={{ height: "27%", justifyContent: "center" }}>
@@ -113,7 +113,6 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     backgroundColor: "rgb(220,220,220)",
     paddingLeft: 20,
-    placeholderTextColor: "#808080",
     shadowColor: "black",
     shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.4,

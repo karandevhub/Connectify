@@ -1,13 +1,14 @@
-import { Text, View, StyleSheet, Image } from 'react-native';
+import { Text, View, StyleSheet, Image, SafeAreaView } from 'react-native';
 import { TouchableOpacity } from 'react-native';
 import AppStack from '../AppStack';
+import CommentComponent from './Comment';
 
 
 export default function AppScreen(props) {
 
   return (
   
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.headerbox}>
       <TouchableOpacity onPress={()=>props.navigation.openDrawer()}>
       <Image style={styles.menu} source={require('../assets/menu.png')}  />
@@ -15,7 +16,6 @@ export default function AppScreen(props) {
       <Text style={styles.Appname}>VibeLink</Text>
       </View>
       <View style={styles.children}>
-
        <AppStack/>
       </View>
 
@@ -40,7 +40,7 @@ export default function AppScreen(props) {
         </TouchableOpacity>
        
       </View>
-  </View>
+  </SafeAreaView>
   );
 }
 
@@ -64,7 +64,8 @@ const styles = StyleSheet.create({
     position:'absolute',
     top:0,
     paddingLeft:12,
-    paddingVertical:18,
+    paddingTop:28,
+    paddingBottom:10,
     flexDirection:'row',
     backgroundColor:'#007bff',
     alignItems:'center',
@@ -95,6 +96,10 @@ createbutton:{
     },
 },
 
+button:{
+  padding:2
+},
+
 bottomButton:{
   height:25,
   width:25,
@@ -111,7 +116,8 @@ bottomButton:{
     backgroundColor:'white',
     alignItems:'center',
     justifyContent:'space-between',
-    paddingVertical:6,
+    paddingBottom:7,
+    paddingTop:2,
     paddingHorizontal:20,
     shadowOpacity:0.30,
       shadowRadius: 4.84,

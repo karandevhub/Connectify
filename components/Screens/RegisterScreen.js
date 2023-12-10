@@ -90,7 +90,6 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     backgroundColor: "rgb(220,220,220)",
     paddingLeft: 20,
-    placeholderTextColor: "#808080",
     shadowColor: "black",
     shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.4,

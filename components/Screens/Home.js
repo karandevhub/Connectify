@@ -6,6 +6,7 @@ import { FlatList, RefreshControl } from "react-native-gesture-handler";
 import axios from "axios";
 import { BASE_URL } from "../../config";
 import { AuthContext } from "../context/AuthContext";
+import CommentComponent from "./Comment";
 
 export function Home() {
   const [data, setData] = useState([]);
@@ -18,9 +19,6 @@ export function Home() {
       setRefresh(false);
     }, 1000);
   };
-
-
-  
 
   const postdata = async () => {
     await axios
@@ -80,10 +78,8 @@ export function Home() {
   const LikeStatus = ({ postId, likes, updateLikes }) => {
     const { userid } = useContext(AuthContext);
     const [likeImage, setLikeImage] = useState(require("../assets/heart.png"));
-   
-    const handleLike = async () => {
-    
 
+    const handleLike = async () => {
       try {
         await axios.patch(`${BASE_URL}/post/like/${postId}`, {}, apiAuth);
         updateLikes();
@@ -103,8 +99,17 @@ export function Home() {
 
     return (
       <TouchableOpacity onPress={handleLike}>
-        <Image style={{ height: 25, width: 27 }} source={likeImage} />
+        <Image style={{ height: 23, width: 25 }} source={likeImage} />
       </TouchableOpacity>
+    );
+  };
+
+  const ProfileImage = ({ profileImg }) => {
+    return (
+      <Image
+        source={profileImg ? { uri: profileImg } : require("../assets/account.png")}
+        style={styles.profileImage}
+      />
     );
   };
 
@@ -114,21 +119,16 @@ export function Home() {
       renderItem={({ item }) => (
         <View style={styles.card} key={item._id}>
           <View style={styles.header}>
-            <Image
-              source={require("../assets/account.png")}
-              style={styles.profileImage}
-            />
+            <ProfileImage profileImg={item.createdBy.imageUrl} />
             <View style={styles.userInfo}>
               <Text style={styles.name}>{item.createdBy.userName}</Text>
               <Text style={styles.title}>{item.title}</Text>
             </View>
           </View>
-          <View style={{ alignItems: "center" }}>
-            <Image
-              source={require("../assets/NOiMAGE.png")}
-              style={styles.postImage}
-              resizeMode="cover"
-            />
+          <View style={{ alignItems: "left" }}>
+          <Text style={styles.userContent}>
+              <Text style={styles.Content}>{item.content}</Text>
+            </Text>
           </View>
           <View>
             <View
@@ -141,23 +141,24 @@ export function Home() {
                 paddingHorizontal: 10,
               }}
             >
-              <View>
-                <LikeStatus
-                  postId={item._id}
-                  likes={item.like}
-                  updateLikes={postdata}
-                />
-
-                <Text>{`${item.like.length} Likes`}</Text>
+              <View style={{ flexDirection: "row", justifyContent: "center",marginBottom:5 }}>
+                <View>
+                  <LikeStatus
+                    postId={item._id}
+                    likes={item.like}
+                    updateLikes={postdata}
+                  />
+                  <Text>{`${item.like.length} Likes`}</Text>
+                </View>
+                <View style={styles.commentContainer}>
+                  <CommentComponent postId={item._id} postdata={item} updateComents={postdata}/>
+                </View>
               </View>
               <View>
                 <FormattedDate date={item.createdAt} />
               </View>
             </View>
-            <Text style={styles.userContent}>
-              <Text style={styles.name}>{item.createdBy.userName}</Text>
-              <Text style={styles.title}> {item.content}</Text>
-            </Text>
+            
           </View>
         </View>
       )}
@@ -184,14 +185,20 @@ const styles = StyleSheet.create({
     width: "100%",
     overflow: "hidden",
     marginVertical: 10,
+    backgroundColor:"white",
+    borderWidth:1,
     borderRadius: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
+    marginTop:15
   },
   scrollView: {
     backgroundColor: "pink",
+  },
+  commentContainer: {
+
   },
 
   header: {
@@ -204,6 +211,7 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
     marginRight: 10,
+  
   },
 
   userContent: {
@@ -212,7 +220,8 @@ const styles = StyleSheet.create({
     paddingTop: 5,
   },
   userInfo: {
-    paddingHorizontal: 10,
+    flex:1,
+    paddingHorizontal: 4,
     justifyContent: "center",
   },
   name: {
@@ -220,6 +229,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   title: {
+    fontWeight:"600",
+    fontSize: 13,
+  },
+
+  Content:{
+    fontWeight:"500",
     fontSize: 14,
   },
   postImage: {

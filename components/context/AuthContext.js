@@ -2,7 +2,6 @@ import React, { createContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BASE_URL } from '../../config';
 import axios from 'axios';
-import { Alert } from 'react-native';
 
 export const AuthContext = createContext();
 
@@ -10,25 +9,17 @@ export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [userToken, setUserToken] = useState(null);
   const [userid,setUserId]=useState('');
-  const login = (email,password) => {
-    axios
+  const login = async(email,password) => {
+    setIsLoading(true);
+   await axios
       .post(`${BASE_URL}/user/login`, { email, password })
-      .then((response) => {
-        setIsLoading(true);
+      .then((response) => { 
         const token = response.data.access_token;
         console.log(response.data)
         console.log('userid',response.data.userId)
         AsyncStorage.setItem('userid',response.data.userId);
-        // Alert.alert('Congratulations', 'Your account has been created.', [
-        //   {
-        //     text: 'Cancel',
-        //     onPress: () => console.log('Cancel Pressed'),
-        //     style: 'cancel',
-        //   },
-        //   {text: 'OK', onPress: () => console.log('OK Pressed')},
-        // ]);
+        setUserId(response.data.userId)
         setUserToken(token);
-        alert
         AsyncStorage.setItem('token', token);
         setIsLoading(false);
       })
@@ -48,14 +39,15 @@ export const AuthProvider = ({ children }) => {
     
     }
   
-
+    setIsLoading(true);
     axios
       .post(`${BASE_URL}/user/signup`, body)
       .then((response) => {
-        setIsLoading(true);
         const token = response.data.access_token;
-        console.log('Signup successful. Token:', token);
+        console.log('Signup successful. Token:', response.data.userId);
         setUserToken(token);
+        AsyncStorage.setItem('userid',response.data.userId);
+        setUserId(response.data.userId)
         AsyncStorage.setItem('token', token);
         setIsLoading(false);
       })
@@ -63,14 +55,14 @@ export const AuthProvider = ({ children }) => {
         console.error('There was a problem with the request:', error);
       });
 
-    setIsLoading(false);
   };
 
-  const logout = () => {
+  const logout = async() => {
     setIsLoading(true);
     setUserToken(null);
-    AsyncStorage.removeItem('userid');
-    AsyncStorage.removeItem('token');
+    setUserId(null)
+    await AsyncStorage.removeItem('userid');
+    await AsyncStorage.removeItem('token');
     setIsLoading(false);
   };
 
@@ -92,7 +84,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ login, logout, isLoading, userToken, signup,userid}}>
+    <AuthContext.Provider value={{ login, logout,setIsLoading, isLoading, userToken, signup,userid}}>
       {children}
     </AuthContext.Provider>
   );
