@@ -19,14 +19,14 @@ export const AuthProvider = ({ children }) => {
         console.log(response.data)
         console.log('userid',response.data.userId)
         AsyncStorage.setItem('userid',response.data.userId);
-        Alert.alert('Congratulations', 'Your account has been created.', [
-          {
-            text: 'Cancel',
-            onPress: () => console.log('Cancel Pressed'),
-            style: 'cancel',
-          },
-          {text: 'OK', onPress: () => console.log('OK Pressed')},
-        ]);
+        // Alert.alert('Congratulations', 'Your account has been created.', [
+        //   {
+        //     text: 'Cancel',
+        //     onPress: () => console.log('Cancel Pressed'),
+        //     style: 'cancel',
+        //   },
+        //   {text: 'OK', onPress: () => console.log('OK Pressed')},
+        // ]);
         setUserToken(token);
         alert
         AsyncStorage.setItem('token', token);

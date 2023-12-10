@@ -1,8 +1,7 @@
 import { View, ActivityIndicator } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { AuthContext } from './context/AuthContext';
-import { useContext, useEffect, useState } from 'react';
-import AppScreen from './Screens/AppScreen';
+import { useContext} from 'react';
 import AppDrawer from './AppDrawer';
 import Auth from './Auth';
 

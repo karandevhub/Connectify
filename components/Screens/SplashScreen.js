@@ -1,10 +1,6 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 
 const SplashScreen = () => {
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -25,40 +21,40 @@ const SplashScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#007bff', 
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#007bff",
   },
   header: {
-    marginTop: '50%',
+    marginTop: "50%",
   },
   logo: {
     fontSize: 50,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: "bold",
+    color: "#fff",
   },
   content: {
     marginTop: 50,
     paddingHorizontal: 30,
-    alignItems: 'center',
+    alignItems: "center",
   },
   contentText: {
     fontSize: 25,
-    color: '#fff',
-    textAlign: 'center',
+    color: "#fff",
+    textAlign: "center",
   },
   footerButton: {
-    marginTop: 'auto',
+    marginTop: "auto",
     marginBottom: 100,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 25,
   },
   footerButtonText: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#007bff',
+    fontWeight: "bold",
+    color: "#007bff",
   },
 });
 

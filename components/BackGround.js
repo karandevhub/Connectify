@@ -1,34 +1,31 @@
-import { Text, View, StyleSheet, ImageBackground,Image } from 'react-native';
+import { View, StyleSheet, Image } from "react-native";
 
 export default function BackGround({ children }) {
   return (
     <View style={styles.container}>
-      <Image
-        source={require('./assets/socialmedia.jpg')}
-        style={styles.box}
-      />
+      <Image source={require("./assets/socialmedia.jpg")} style={styles.box} />
       <View style={styles.children}>{children}</View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container:{
-    flex:1,
-    justifyContent:'center',
-    alignItems:'center',
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   box: {
-    width:'100%',
-    height:'100%',
+    width: "100%",
+    height: "100%",
   },
 
   children: {
-    width:'100%',
-    height:'100%',
-    justifyContent:'center',
-    position: 'absolute',
-    alignItems:'center'
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    position: "absolute",
+    alignItems: "center",
   },
 });

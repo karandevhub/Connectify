@@ -1,30 +1,9 @@
 import { Text, View, StyleSheet, Image } from 'react-native';
-import { useContext, useEffect, useState } from 'react';
-import axios from 'axios';
-import { BASE_URL } from '../../config';
-import { FlatList } from 'react-native-gesture-handler';
-import { TouchableOpacity } from 'react-native-web';
+import { TouchableOpacity } from 'react-native';
 import AppStack from '../AppStack';
-import App from '../../App';
+
 
 export default function AppScreen(props) {
-  const[data,setData]=useState([]);
-
-  const postdata = () => {
-    axios
-    .get(`${BASE_URL}/post`)
-      .then((response) => {
-        const feedData = response.data;
-        setData(feedData);
-      })
-      .catch((error) => {
-        console.error('There was a problem with the request:', error);
-      });
-
-  };
-  useEffect(()=>{
-    postdata();
-  },[])
 
   return (
   
@@ -71,9 +50,6 @@ const styles = StyleSheet.create({
     width:'100%',
   },
 
-  postContainer:{
-    paddingVertical:10,
-  },
 
   children:{
     flex:1,
@@ -88,11 +64,10 @@ const styles = StyleSheet.create({
     position:'absolute',
     top:0,
     paddingLeft:12,
-    paddingVertical:15,
+    paddingVertical:18,
     flexDirection:'row',
     backgroundColor:'#007bff',
     alignItems:'center',
-    marginBottom:5,
     shadowOpacity:0.30,
     shadowRadius: 4.84,
     shadowColor: 'black',
@@ -109,8 +84,8 @@ const styles = StyleSheet.create({
   },
 
 createbutton:{
-      height:40,
-      width:40,
+      height:45,
+      width:46,
       shadowOpacity:0.50,
       shadowRadius: 1.84,
       shadowColor: 'black',
@@ -126,29 +101,17 @@ bottomButton:{
   
 },
 
-  card: {
-    borderRadius: 10,
-    overflow: 'hidden',
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-  },
 
   buttonContainer: {
     width:'100%',
     flexDirection:'row',
     position: 'absolute',
-    bottom:-1,
+    bottom:0,
     alignItems: 'center',
     backgroundColor:'white',
     alignItems:'center',
     justifyContent:'space-between',
-    paddingVertical:4,
+    paddingVertical:6,
     paddingHorizontal:20,
     shadowOpacity:0.30,
       shadowRadius: 4.84,
@@ -159,57 +122,12 @@ bottomButton:{
     },
   },
 
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
 
   Appname:{
         fontSize:20,
-        fontWeight:700,
+        fontWeight:'bold',
         color:'white',
         backgroundColor:'#007bff',
-  },
-
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 10,
-  },
-  profileImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    marginRight: 10,
-  },
-
-  userProfile:{
-    position:'absolute',
-    right:10,
-    width: 30,
-    height: 30,
-    borderRadius: 20,
-  },
-
-
-  userContent:{
-    padding:10,
-  },
-  userInfo: {
-    padding:10,
-    justifyContent: 'center',
-  },
-  name: {
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  title: {
-    fontSize: 14,
-  },
-  postImage: {
-    width: '100%',
-    aspectRatio: 1/1,
   },
  
 });

@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet, Image } from 'react-native';
+import { Text, View, StyleSheet } from 'react-native';
 import BackGround from '../BackGround';
 import Btn from '../Btn';
 
@@ -47,8 +47,8 @@ const styles = StyleSheet.create({
 
   text: {
     marginTop: 100,
-    fontSize: 64,
-    fontWeight: 500,
+    fontSize: 60,
+    fontWeight: '600',
     color: 'white',
     textAlign: 'center',
   },
