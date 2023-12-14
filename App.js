@@ -10,7 +10,7 @@ export default function App() {
   useEffect(() => {
     setTimeout(() => {
       setAnimating(false);
-    }, 3000);
+    }, 0);
   }, []);
 
   return (

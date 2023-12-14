@@ -1,7 +1,7 @@
 import { Text, View, StyleSheet, Image, SafeAreaView } from 'react-native';
 import { TouchableOpacity } from 'react-native';
 import AppStack from '../AppStack';
-import CommentComponent from './Comment';
+
 
 
 export default function AppScreen(props) {
@@ -54,8 +54,7 @@ const styles = StyleSheet.create({
   children:{
     flex:1,
     marginTop:50,
-    padding:10,
-    marginBottom:40,
+    marginBottom:50,
   },
 
   headerbox:{
@@ -64,8 +63,7 @@ const styles = StyleSheet.create({
     position:'absolute',
     top:0,
     paddingLeft:12,
-    paddingTop:28,
-    paddingBottom:10,
+    paddingVertical:13,
     flexDirection:'row',
     backgroundColor:'#007bff',
     alignItems:'center',
@@ -117,7 +115,6 @@ bottomButton:{
     alignItems:'center',
     justifyContent:'space-between',
     paddingBottom:7,
-    paddingTop:2,
     paddingHorizontal:20,
     shadowOpacity:0.30,
       shadowRadius: 4.84,

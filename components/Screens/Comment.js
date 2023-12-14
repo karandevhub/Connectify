@@ -14,7 +14,7 @@ import axios from "axios";
 import { BASE_URL } from "../../config";
 
 const CommentComponent = ({ postId, postdata, updateComents }) => {
-  const { userToken } = useContext(AuthContext);
+  const { userToken,userid} = useContext(AuthContext);
   const [showCommentBox, setShowCommentBox] = useState(false);
   const [newComment, setNewComment] = useState("");
   const [commentToDelete, setCommentToDelete] = useState(null);
@@ -80,8 +80,8 @@ const CommentComponent = ({ postId, postdata, updateComents }) => {
       .then((response) => {
         const feedData = response.data;
         console.log("comment data", feedData);
-        setNewComment("");
         updateComents();
+        setNewComment('');
       })
       .catch((error) => {
         console.error("requeat error:", error);
@@ -148,24 +148,25 @@ const CommentComponent = ({ postId, postdata, updateComents }) => {
         <Text
           style={{
             fontSize: 8,
+            paddingHorizontal:4,
             position: "absolute",
-            right: 0,
+            right: 1,
             color: "white",
             backgroundColor: "red",
-            paddingHorizontal: 4,
-            borderRadius: 100,
+            borderRadius:500,
           }}
         >
           {postdata.comment.length}
         </Text>
       </TouchableOpacity>
-
+  
       <Modal
         visible={showCommentBox}
         animationType="slide"
         transparent={true}
         onRequestClose={toggleCommentBox}
       >
+         <View  style={{backgroundColor: "rgba(0, 0, 0, 0.5)", height:"100%"}}>
         <View style={styles.modalContainer}>
           <DeleteConfirmation
             visible={showDeleteConfirmation}
@@ -204,6 +205,7 @@ const CommentComponent = ({ postId, postdata, updateComents }) => {
             <FlatList
               data={postdata.comment}
               keyExtractor={(item) => item._id}
+              inverted
               renderItem={({ item }) => (
                 <View style={styles.commentItem} key={item._id}>
                   <View
@@ -226,10 +228,13 @@ const CommentComponent = ({ postId, postdata, updateComents }) => {
                           setCommentToDelete(item._id);
                         }}
                       >
-                        <Image
-                          style={{ width: 15, height: 17, marginLeft: 5 }}
-                          source={require("../assets/dots.png")}
-                        />
+                        {userid === item.createdBy._id && (
+                           <Image
+                           style={{ width: 15, height: 17, marginLeft: 5 }}
+                           source={require("../assets/dots.png")}
+                         />
+                        )}
+                       
                       </TouchableOpacity>
                     </View>
                   </View>
@@ -250,7 +255,9 @@ const CommentComponent = ({ postId, postdata, updateComents }) => {
             </TouchableOpacity>
           </View>
         </View>
+        </View>
       </Modal>
+      
     </View>
   );
 };
@@ -266,7 +273,9 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "white",
     alignItems: "center",
-    borderRadius: 20,
+    borderTopLeftRadius:20,
+    borderTopRightRadius:20,
+    marginTop:30
   },
   commentItem: {
     flex: 1,

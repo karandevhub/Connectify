@@ -113,10 +113,27 @@ export function Home() {
     );
   };
 
+  const renderContentWithTags = (content) => {
+    const pattern = /(#\w+)/g; // 
+    const parts = content.split(pattern); 
+    return parts.map((part, index) => {
+      if (part.match(pattern)) {
+        return (
+          <Text key={index} style={{ color: 'blue' }}>
+            {part}
+          </Text>
+        );
+      } else {
+        return <Text key={index}>{part}</Text>;
+      }
+    });
+  };
+
   return (
     <FlatList
       data={data}
       renderItem={({ item }) => (
+        <View style={{marginHorizontal:10}}>
         <View style={styles.card} key={item._id}>
           <View style={styles.header}>
             <ProfileImage profileImg={item.createdBy.imageUrl} />
@@ -127,7 +144,7 @@ export function Home() {
           </View>
           <View style={{ alignItems: "left" }}>
           <Text style={styles.userContent}>
-              <Text style={styles.Content}>{item.content}</Text>
+              <Text style={styles.Content}>{renderContentWithTags(item.content)}</Text>
             </Text>
           </View>
           <View>
@@ -158,7 +175,7 @@ export function Home() {
                 <FormattedDate date={item.createdAt} />
               </View>
             </View>
-            
+            </View>
           </View>
         </View>
       )}
@@ -192,7 +209,8 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    marginTop:15
+    marginTop:15,
+
   },
   scrollView: {
     backgroundColor: "pink",
