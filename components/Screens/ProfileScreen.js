@@ -8,20 +8,21 @@ import * as ImagePicker from "expo-image-picker";
 import { FlatList, RefreshControl } from "react-native-gesture-handler";
 
 export default function Profile(props) {
-  const { userToken, userid,setIsLoading } = useContext(AuthContext);
+  const { userToken, userid, setIsLoading } = useContext(AuthContext);
   const [userPosts, setUserPosts] = useState([]);
   const [userName, setUserName] = useState("");
   const [profileImg, setProfileImg] = useState(
     "https://placekitten.com/200/200"
   );
-  const [refresh, setRefresh] = useState(false);
+  const [refresh, setRefresh] = useState(false); 
 
   const refreshing = () => {
     setRefresh(true);
     setTimeout(() => {
       setRefresh(false);
-    }, 1000);
+    },2000);
   };
+
   const postdata = async () => {
     await axios
       .get(`${BASE_URL}/post?userId=${userid}&limit=100`)
@@ -42,7 +43,6 @@ export default function Profile(props) {
   };
 
   const userinfo = async () => {
-    
     await axios
       .get(`${BASE_URL}/user/getUser?id=${userid}`, apiAuth)
       .then((response) => {
@@ -70,8 +70,6 @@ export default function Profile(props) {
     };
   }, []);
 
-
-
   const formatDate = (inputDate) => {
     const date = new Date(inputDate);
     const currentDate = new Date();
@@ -97,11 +95,23 @@ export default function Profile(props) {
   const FormattedDate = ({ date }) => {
     const formattedDate = formatDate(date);
     return (
-      <View style={{flex:1,position:"relative",marginTop:15,marginLeft:5}}>
-        <Text style={{fontSize:12,padding:5, color: "gray",position:"absolute",bottom:0 }}>{formattedDate}</Text>
+      <View
+        style={{ flex: 1, position: "relative", marginTop: 15, marginLeft: 5 }}
+      >
+        <Text
+          style={{
+            fontSize: 12,
+            padding: 5,
+            color: "gray",
+            position: "absolute",
+            bottom: 0,
+          }}
+        >
+          {formattedDate}
+        </Text>
       </View>
     );
-  }
+  };
 
   const pickImage = async () => {
     try {
@@ -109,23 +119,25 @@ export default function Profile(props) {
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         quality: 0.5,
-        aspect:[1,1],
+        aspect: [1, 1],
         allowsMultipleSelection: false,
       });
-  
-      if (!result.canceled) {
-        
+
+      if (!result.canceled && result.uri) {
         setProfileImg(result.uri);
-  
+
         const imageData = new FormData();
         imageData.append("photo", {
           uri: result.uri,
           type: "image/jpeg",
           name: "photo.jpg",
         });
-  
-       
-        const response = await axios.post(`${BASE_URL}/user/addPhoto`, imageData, apiAuth);
+
+        const response = await axios.post(
+          `${BASE_URL}/user/addPhoto`,
+          imageData,
+          apiAuth
+        );
         console.log("Image uploaded", response.data);
       } else {
         console.log("Image selection cancelled or failed");
@@ -136,56 +148,84 @@ export default function Profile(props) {
   };
   const [selectedPost, setSelectedPost] = useState(null);
   const [showOptions, setShowOptions] = useState(false);
-const[postId,setPostId]=useState('')
+  const [postId, setPostId] = useState("");
 
   const handleDelete = async () => {
     try {
       await axios({
-        method: 'delete',
+        method: "delete",
         url: `${BASE_URL}/post/delete/${postId}`,
-        headers: {Authorization: `Bearer ${userToken}`},
+        headers: { Authorization: `Bearer ${userToken}` },
       });
       postdata();
       refreshing();
-      setShowOptions(false)
+      setShowOptions(false);
     } catch (error) {
       console.error("Error deleting comment:", error);
     }
   };
-  
 
-
-const UpdateDelete=()=>{
-  return(
-    <View style={styles.optionsOverlay}>
-    <View style={styles.optionsContainer}>
-      <TouchableOpacity onPress={()=>{setShowOptions(false)}} style={{height:25,width:25,position:'absolute',top:-5,right:-5}}>
-    <Image source={require("../assets/multiply.png")} style={{height:23,width:23}}/>
-    </TouchableOpacity>
-    <Text style={{marginBottom:10}}>Do you want to?</Text>
-      <View style={{display:"flex",flexDirection:"row",gap:26,width:"100%",alignItems:"center",justifyContent:"center"}}>
-      <TouchableOpacity style={styles.optionButton} onPress={()=>{
-        setShowOptions(false);
-        props.navigation.navigate("UpdatePost")}}>
-        <Text style={styles.buttonText}>Update</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={[styles.optionButton, styles.deleteButton]} onPress={handleDelete}>
-        <Text style={[styles.buttonText, { color: '#fff' }]}>Delete</Text>
-      </TouchableOpacity>
+  const UpdateDelete = () => {
+    return (
+      <View style={styles.optionsOverlay}>
+        <View style={styles.optionsContainer}>
+          <TouchableOpacity
+            onPress={() => {
+              setShowOptions(false);
+            }}
+            style={{
+              height: 25,
+              width: 25,
+              position: "absolute",
+              top: -5,
+              right: -5,
+            }}
+          >
+            <Image
+              source={require("../assets/multiply.png")}
+              style={{ height: 23, width: 23 }}
+            />
+          </TouchableOpacity>
+          <Text style={{ marginBottom: 10 }}>Do you want to?</Text>
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              gap: 26,
+              width: "100%",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <TouchableOpacity
+              style={styles.optionButton}
+              onPress={() => {
+                setShowOptions(false);
+                props.navigation.navigate("UpdatePost", { selectedPost });
+              }}
+            >
+              <Text style={styles.buttonText}>Update</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.optionButton, styles.deleteButton]}
+              onPress={handleDelete}
+            >
+              <Text style={[styles.buttonText, { color: "#fff" }]}>Delete</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
-    </View>
-  </View>
-  )
-}
+    );
+  };
 
   const renderPostItem = ({ item }) => {
     const renderContentWithTags = (content) => {
-      const pattern = /(#\w+)/g; // 
-      const parts = content.split(pattern); 
+      const pattern = /(#\w+)/g; //
+      const parts = content.split(pattern);
       return parts.map((part, index) => {
         if (part.match(pattern)) {
           return (
-            <Text key={index} style={{ color: 'blue' }}>
+            <Text key={index} style={{ color: "blue" }}>
               {part}
             </Text>
           );
@@ -195,26 +235,40 @@ const UpdateDelete=()=>{
       });
     };
 
-    const handlePostClick = (postId) => {
-      setPostId(postId); 
+    const handlePostClick = (postdata) => {
+      setPostId(postdata._id);
+      setSelectedPost(postdata);
       setShowOptions(true);
     };
-    
-    return (
-    <TouchableOpacity style={styles.postContainer} onPress={() => handlePostClick(item._id)} >
-      <Text style={styles.postTitle}>{item.title}</Text>
-      <Text style={styles.content}>{renderContentWithTags(item.content)}</Text>
-      <FormattedDate date={item.createdAt} />
-    </TouchableOpacity>
-  )}
-  ;
 
+    return (
+      <TouchableOpacity
+        style={styles.postContainer}
+        onPress={() => handlePostClick(item)}
+      >
+        <Text style={styles.postTitle}>{item.title}</Text>
+        <Text style={styles.content}>
+          {renderContentWithTags(item.content)}
+        </Text>
+        <FormattedDate date={item.createdAt} />
+      </TouchableOpacity>
+    );
+  };
   return (
     <View style={styles.container}>
       <View style={styles.profileContainer}>
         <TouchableOpacity onPress={pickImage}>
           <Image source={{ uri: profileImg }} style={styles.profileImage} />
-          <Image source={require("../assets/plus.png")} style={{height:13,width:13,position:'absolute', bottom:0,right:13}}/>
+          <Image
+            source={require("../assets/plus.png")}
+            style={{
+              height: 13,
+              width: 13,
+              position: "absolute",
+              bottom: 0,
+              right: 13,
+            }}
+          />
         </TouchableOpacity>
         <View
           style={{
@@ -240,7 +294,7 @@ const UpdateDelete=()=>{
       >
         My posts
       </Text>
-      {showOptions && (<UpdateDelete/>)}
+      {showOptions && <UpdateDelete />}
       <FlatList
         data={userPosts}
         renderItem={renderPostItem}
@@ -285,7 +339,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   profileContainer: {
-    marginHorizontal:10,
+    marginHorizontal: 10,
     paddingHorizontal: 10,
     paddingVertical: 30,
     flexDirection: "row",
@@ -303,46 +357,46 @@ const styles = StyleSheet.create({
     },
   },
   optionsOverlay: {
-    position: 'absolute',
-    zIndex:2,
+    position: "absolute",
+    zIndex: 2,
     top: 0,
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
   },
   optionsContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     padding: 20,
     borderRadius: 10,
-    width: '80%',
-    alignItems: 'center',
+    width: "80%",
+    alignItems: "center",
   },
   optionButton: {
-    backgroundColor: '#3498db',
+    backgroundColor: "#3498db",
     padding: 8,
-    width: '40%',
-    justifyContent:"center",
+    width: "40%",
+    justifyContent: "center",
     borderRadius: 5,
     marginVertical: 5,
-    alignItems: 'center',
+    alignItems: "center",
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
   },
   deleteButton: {
-    backgroundColor: 'red',
+    backgroundColor: "red",
   },
   profileImage: {
     width: 55,
     height: 55,
     borderRadius: 30,
     marginRight: 10,
-    borderWidth:1,
-    borderColor:"black"
+    borderWidth: 1,
+    borderColor: "black",
   },
   username: {
     fontSize: 18,
@@ -373,10 +427,10 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     padding: 7,
   },
-  content:{
+  content: {
     fontSize: 13,
     fontWeight: "500",
     padding: 10,
-    marginBottom:10,
-  }
+    marginBottom: 10,
+  },
 });

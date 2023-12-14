@@ -5,23 +5,28 @@ import { BASE_URL } from "../../config";
 import { AuthContext } from "../context/AuthContext";
 
 const UpdatePost = (props) => {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const { userToken } = useContext(AuthContext);
-  const CreatePost = () => {
-    const body = {
+  const [postdata, setPostData]=useState(props.route.params.selectedPost)
+  const [title, setTitle] = useState(postdata.title);
+  const [content, setContent] = useState(postdata.content);
+  const { userToken,refreshing,setRefresh} = useContext(AuthContext);
+
+console.log(props)
+  const CreatePost = async() => {
+    const data = {
+      id: postdata._id,
       title: title,
       content: content,
     };
-
+    console.log(data)
     const apiAuth = {
       headers: {
         Authorization: `Bearer ${userToken}`,
+        'Content-Type': 'application/json',
       },
     };
 
-    axios
-      .post(`${BASE_URL}/post`, body, apiAuth)
+   await axios
+      .patch(`${BASE_URL}/post/update`,data, apiAuth)
       .then((res) => {
         console.log(res);
         props.navigation.navigate("profile");
